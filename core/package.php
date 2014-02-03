@@ -2,14 +2,23 @@
 class package
 {
 	VAR $params;
-	function  __construct($params=NULL)
+	VAR $packman;
+	VAR $packidx;
+	function  __construct($pm,$params=NULL)
 	{
+		$this->packman = $pm;		
 		$this->params = $params; 
+		$this->OnConstruct();
 	}	
 	
-	function event($evname)
+	function mess($evsender,$evname,$params)
 	{
 		
+		
+	}
+	
+	function OnConstruct()
+	{
 		
 	}
 }
