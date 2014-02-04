@@ -1,0 +1,19 @@
+body {
+	background-image: url('/themes/base/images/background.jpg');
+	
+}
+
+#container {
+	margin: auto auto;
+	
+	width : 80%;
+}
+
+#content {
+	margin: auto auto;
+	
+	width : 100%;
+	height: 90%;
+	background-color: white;
+	overflow: auto;
+}

@@ -3,16 +3,25 @@ class base_html extends package
 {
 	function exe()
 	{
+		$this->event("beforeprint");
 		?>
 <html>
 	<head>
-	
+		<?php 
+			$this->event("oncss");
+		?>
+		<?php 
+			$this->event("onjs");
+		?>
 	</head>
 	<body>
-		<h1>12345</h1>
+		<?php 
+			$this->event("onbody");
+		?>
 	</body>
 </html>		
 		<?php
+		$this->event("afterprint");
 		
 	}
 	
