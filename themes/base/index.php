@@ -3,6 +3,8 @@
 	
 	</div>
 	<div id="content">
-	<?php ?>
+	<?php 
+		$this->event("oncontent");
+	?>
 	</div>
 </div>

@@ -10,7 +10,7 @@ class package
 		$this->params = $params; 
 		$this->packidx = $idx;
 		//$this->load_req_packs();
-		$this->OnConstruct();
+		//$this->OnConstruct();
 	}	
 	
 	function load_req_packs()

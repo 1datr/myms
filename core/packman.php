@@ -42,28 +42,6 @@ class packman {
 		// require package classes dependencies
 		$this->req_dependencies($packname);
 		
-		/*
-		if(!empty($conf['reqpacks']))
-		{
-			foreach($conf['reqpacks'] as $packidx => $reqpack)
-			{
-				
-				if(is_int($packidx)) // загрузка без параметров
-				{
-					
-					if($this->get_pack_count($reqpack)==0)
-					{
-						$this->addpack($reqpack);
-						//echo ":$packidx=>$reqpack:";
-					}
-				}
-				elseif(is_string($packidx))
-				{
-					$this->addpack($packidx,$reqpack);
-				}
-			}
-		}*/
-		
 		$pack_class_name = strtr($packname,".","_");
 		$pack = new $pack_class_name(&$this,$idx,Array('conf'=>$conf,'args'=>$args));
 		return $pack;
@@ -74,7 +52,7 @@ class packman {
 	{
 		foreach($this->_PACKAGES as $idx => $P)
 		{
-			//echo $idx;
+			//echo $idx;			
 			$this->_PACKAGES[$idx]->mess($evsender,$evname,$params);
 			
 		}
@@ -96,7 +74,9 @@ class packman {
 		{
 			$obj = $this->load_pack($pack,$pack."_".($this->get_pack_count($pack)+1));
 			$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)] = $obj;
+			
 			$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)]->load_req_packs();
+			$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)]->OnConstruct();
 		}
 		else
 		{
@@ -110,7 +90,9 @@ class packman {
 			
 			$obj = $this->load_pack($pack,$packidx,$packaparams);
 			$this->_PACKAGES[$packidx] = $obj;
+			
 			$this->_PACKAGES[$packidx]->load_req_packs();
+			$this->_PACKAGES[$packidx]->OnConstruct();
 		}
 		// 
 		if(!empty($this->_PACK_COUNTS[$pack]))
@@ -142,6 +124,18 @@ class packman {
 					$result[]=$p;
 			}
 			return $result;
+		}
+	}
+	
+	function load_packs($packlist)
+	{
+		foreach($packlist as $idx => $p)
+		{
+			if(is_int($idx))
+				$this->addpack($p);
+			elseif(is_string($idx))
+				$this->addpack($idx,$p);
+			
 		}
 	}
 }
