@@ -4,11 +4,19 @@ class packman {
 	
 	VAR $_PACKAGES;
 	VAR $_PACK_COUNTS;
+	var $_PACK_FILES_LIST;
 	
 	function __construct()
 	{
 		$this->_PACKAGES = Array();
 		$this->_PACK_COUNTS = Array();
+		$this->_PACK_FILES_LIST = Array();
+	}
+	// add file to list of including scripts
+	function add_pack_file($pfile)
+	{
+		if(!in_array($pfile, $this->_PACK_FILES_LIST))  
+			$this->_PACK_FILES_LIST[]=$pfile;
 	}
 	// include all files required to work script
 	function req_dependencies($packname)
@@ -23,6 +31,7 @@ class packman {
 		else return;
 		foreach($req as $r)
 		{
+			$this->add_pack_file($r);
 			require_once $_SERVER['DOCUMENT_ROOT']."/packs/$r/index.php";
 			$this->req_dependencies($r);
 		}
@@ -137,6 +146,36 @@ class packman {
 				$this->addpack($idx,$p);
 			
 		}
+	}
+	
+	function serialize($filename)
+	{
+		$filename = $_SERVER['DOCUMENT_ROOT']."/ser/$filename";
+		
+		$files = get_included_files();
+		/*foreach($files as $idx => $reqfile)
+		{
+			if(!preg_match(".+/packs/.+/index.php/Uis", $reqfile))
+			{
+				unset($files[$idx]);
+			}
+		}	*/	
+		$code = "<?php 
+				\$reqs = unserialize('".serialize($files)."');
+				foreach(\$reqs as \$r) require_once \$r;
+				\$this->_PACKAGES = unserialize('".serialize($this->_PACKAGES)."');
+				\$this->_PACK_COUNTS  = unserialize('".serialize($this->_PACK_COUNTS)."');
+				?>"; 
+		file_put_contents($filename, $code);
+	}
+	
+	function load($filename)
+	{
+		$filename = $_SERVER['DOCUMENT_ROOT']."/ser/$filename";
+		if(!file_exists($filename)) return false;
+		include $filename;
+		
+		return true;
 	}
 }
 ?>
