@@ -1,4 +1,5 @@
 <?php 
+// $_REQUEST['q']='about';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/index.php';
 $pm = new packman();
 if(!$pm->load("front"))
