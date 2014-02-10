@@ -81,11 +81,15 @@ class packman {
 		//		
 		if($packaparams==NULL)
 		{
-			$obj = $this->load_pack($pack,$pack."_".($this->get_pack_count($pack)+1));
-			$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)] = $obj;
-			
-			$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)]->load_req_packs();
-			$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)]->OnConstruct();
+			$srch = $this->search_pack($pack);
+			if(count($srch)==0)
+			{
+				$obj = $this->load_pack($pack,$pack."_".($this->get_pack_count($pack)+1));
+				$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)] = $obj;
+				
+				$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)]->load_req_packs();
+				$this->_PACKAGES[$pack."_".($this->get_pack_count($pack)+1)]->OnConstruct();
+			}
 		}
 		else
 		{
@@ -153,19 +157,23 @@ class packman {
 		$filename = $_SERVER['DOCUMENT_ROOT']."/ser/$filename";
 		
 		$files = get_included_files();
-		/*foreach($files as $idx => $reqfile)
-		{
-			if(!preg_match(".+/packs/.+/index.php/Uis", $reqfile))
+		$ptrn = $_SERVER['DOCUMENT_ROOT']."/packs/";
+		$strlen = strlen($ptrn);
+		foreach($files as $idx => $reqfile)
+		{						
+			$reqfile = strtr($reqfile,"\\","/");
+			if(substr($reqfile, 0, $strlen)!=$ptrn)
 			{
 				unset($files[$idx]);
 			}
-		}	*/	
+		}		
 		$code = "<?php 
 				\$reqs = unserialize('".serialize($files)."');
 				foreach(\$reqs as \$r) require_once \$r;
 				\$this->_PACKAGES = unserialize('".serialize($this->_PACKAGES)."');
-				\$this->_PACK_COUNTS  = unserialize('".serialize($this->_PACK_COUNTS)."');
+				\$this->_PACK_COUNTS  = unserialize('".serialize($this->_PACK_COUNTS)."');				
 				?>"; 
+		
 		file_put_contents($filename, $code);
 	}
 	
@@ -174,7 +182,10 @@ class packman {
 		$filename = $_SERVER['DOCUMENT_ROOT']."/ser/$filename";
 		if(!file_exists($filename)) return false;
 		include $filename;
-		
+		foreach ($this->_PACKAGES as $packidx => $P)
+		{
+			$this->_PACKAGES[$packidx]->OnConstruct();
+		}
 		return true;
 	}
 }

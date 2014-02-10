@@ -9,10 +9,14 @@ class base_theme extends package
 		$mode = $this->arg('mode');
 		$conf = $this->conf('themes');
 		$this->theme = $conf[$mode];
+		$this->loading_file = 'index.php';
+		if(file_exists($_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/onload.php"))
+			include $_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/onload.php";
 	}
 	
 	function base_html_oncss()
 	{
+		if(!file_exists($_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/css")) return;
 		$hdir = dir($_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/css");
 		while (false !== ($entry = $hdir->read())) {
 			if(($entry!=".")&&($entry!=".."))
@@ -27,6 +31,7 @@ class base_theme extends package
 	
 	function base_html_onjs()
 	{
+		if(!file_exists($_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/js")) return;
 		$hdir = dir($_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/js");
 		while (false !== ($entry = $hdir->read())) {
 			if(($entry!=".")&&($entry!=".."))
@@ -40,7 +45,7 @@ class base_theme extends package
 	
 	function base_html_onbody()
 	{
-		include $_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/index.php";
+		include $_SERVER['DOCUMENT_ROOT']."/themes/".$this->theme."/".$this->loading_file;
 	}
 		
 	
